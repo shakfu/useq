@@ -213,7 +213,7 @@ The frontend reads `useq_last_diagnostics()` immediately after every eval for re
 }
 ```
 
-5.2 Per-output runtime state on firmware is communicated through LED colour ([firmware.md §3.2](firmware.md)) — the firmware does not currently push periodic diagnostic updates over serial outside eval responses.
+5.2 Per-output runtime state on firmware is communicated through LED colour — the firmware does not currently push periodic diagnostic updates over serial outside eval responses.
 
 5.3 The data model is identical on both targets. Only the delivery channel differs.
 

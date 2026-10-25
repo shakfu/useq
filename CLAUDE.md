@@ -323,9 +323,6 @@ Run tests frequently during development to ensure stability.
 ## Documentation References
 
 - **Canonical Specs**: `/docs/specs/MAIN.md` - ModuLisp semantics index
-- **Wire Protocol**: `/docs/specs/wire-protocol.md` - USB CDC protocol contract
-- **Firmware Runtime**: `/docs/specs/firmware.md` - firmware runtime invariants
-- **Changelog**: `/docs/changelog.md` - Version history
 
 ## Language Stack
 

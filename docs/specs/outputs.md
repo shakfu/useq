@@ -26,8 +26,7 @@
 - `a1`..`a8` — continuous (analog voltage / PWM), nominally `[0, 1]` mapped to the module's voltage range;
 - `d1`..`d8` — binary (gate / digital), thresholded at `0.5`;
 - `s1`..`s8` — serial streams, emitted as binary `STREAM` frames over USB
-  (`[0x1F][0x00][channel:u8][value:f64-LE]`, 11 bytes total; see
-  [wire-protocol.md §3.2](wire-protocol.md)).
+  (`[0x1F][0x00][channel:u8][value:f64-LE]`, 11 bytes total).
 
 1.2 Output assignment is a top-level form: `(a1 expr)`. The expression is compiled and stored as the output's signal program. The output is sampled every tick.
 

@@ -11,8 +11,8 @@
 #define CATCH_CONFIG_MAIN
 #include "../catch.hpp"
 
-#include "../../uSEQ/src/devtools/devtools.h"
-#include "../../uSEQ/src/signal_engine/signal_engine.h"
+#include "../../src/devtools/devtools.h"
+#include "../../src/signal_engine/signal_engine.h"
 
 #include <cstring>
 #include <string>

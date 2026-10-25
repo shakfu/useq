@@ -9,8 +9,8 @@
 ;; TODO 6. Return `result` value
 
 (def specs-file "builtins.edn")
-(def target-file-h "../uSEQ/src/lisp/generated_builtins.h")
-(def target-file-cpp "../uSEQ/src/lisp/generated_builtins.cpp")
+(def target-file-h "../src/lisp/generated_builtins.h")
+(def target-file-cpp "../src/lisp/generated_builtins.cpp")
 
 (def preds->words
   {;; NUMBERS

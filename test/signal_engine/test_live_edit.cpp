@@ -8,9 +8,9 @@
 #define CATCH_CONFIG_MAIN
 #include "../catch.hpp"
 
-#include "../../uSEQ/src/signal_engine/cold_eval.h"
-#include "../../uSEQ/src/signal_engine/graph_builder.h"
-#include "../../uSEQ/src/signal_engine/executor.h"
+#include "../../src/signal_engine/cold_eval.h"
+#include "../../src/signal_engine/graph_builder.h"
+#include "../../src/signal_engine/executor.h"
 
 #include <cstring>
 #include <cmath>

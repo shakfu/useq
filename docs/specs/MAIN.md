@@ -130,7 +130,7 @@ Language-wide degradation contracts. Cited from feature sub-specs.
 
 Items that span multiple sub-specs. Feature-specific open questions live in the corresponding sub-spec.
 
-5.1 **`schedule` and `unschedule`.** Whether the historical contract (`(schedule name body period)`) survives in the same shape, gets folded into the global-quant-phasor mechanism ([top-level.md §1.3](top-level.md), [firmware.md §6](firmware.md)), or is replaced by something else is not yet decided. Treat current behaviour as the historical contract; the spec needs updating once the design lands.
+5.1 **`schedule` and `unschedule`.** Whether the historical contract (`(schedule name body period)`) survives in the same shape, gets folded into the global-quant-phasor mechanism ([top-level.md §1.3](top-level.md)), or is replaced by something else is not yet decided. Treat current behaviour as the historical contract; the spec needs updating once the design lands.
 
 5.2 **Imperative-mode boundaries.** Whether the dialect is set per-session, per-tab, or via a `?mode=imperative` URL param is a UI/runtime decision pending product input. The semantics in [dialects.md](dialects.md) hold once a session is in imperative mode.
 
@@ -189,12 +189,6 @@ Read each as a self-contained spec. Internal numbering restarts at 1.1.
 6.13 [failure-model.md](failure-model.md) — compile-time vs runtime errors, LKG fallback, per-output health states, success feedback, REPL-vs-output channels, batch-eval isolation, cascade-noise mitigation, chain of blame.
 
 6.14 [diagnostics.md](diagnostics.md) — diagnostic data shapes, source-span coordinates, WASM ABI exports, firmware serial JSON embedding, fuzzy-name matching.
-
-6.15 [firmware.md](firmware.md) — firmware composition, tick loop, dual-core split, boot/recovery, watchdog, hardware variants, persistence surface.
-
-6.15.1 [hardware-io.md](hardware-io.md) — physical pin maps, input sampling (filtering, interrupts, ADC), output writing (PWM, SPI DAC, PIO), LED feedback system, boot LED sequences.
-
-6.16 [wire-protocol.md](wire-protocol.md) — byte-level and message-level contract over USB CDC serial between the firmware and a host editor. Single source of truth for what crosses the wire.
 
 6.17 [visualisation-projection.md](visualisation-projection.md) — WASM/runtime support for editor visualisation projection: live-state ticks, projection forks, reset-fill, frontier extension, and the combined tick/project ABI semantics.
 

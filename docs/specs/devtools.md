@@ -7,9 +7,8 @@
 > debugging: an AI agent connects, discovers available channels,
 > enables what it needs, and queries or streams structured data.
 >
-> Counterpart to [wire-protocol.md](wire-protocol.md) (transport layer),
-> [firmware.md](firmware.md) (tick loop), [diagnostics.md](diagnostics.md)
-> (compiler diagnostics — a separate system).
+> Counterpart to [diagnostics.md](diagnostics.md) (compiler diagnostics —
+> a separate system).
 >
 > The devtools system is **dev-build-only**. It compiles to nothing in
 > release firmware. It is distinct from the existing `USEQ_DEBUG` printf
@@ -332,14 +331,13 @@ well under 2 KB.
 ## 5. Wire Protocol Extension
 
 5.1 DevTools adds one new JSON message type to the wire protocol:
-`"debug"`. It follows the standard request/response contract
-([wire-protocol.md §5.1](wire-protocol.md)). The `action` field
+`"debug"`. It follows the standard request/response contract.
+The `action` field
 selects the operation.
 
 All `debug` messages are gated behind `USEQ_DEVTOOLS` at compile time.
 A release-build device that receives a `debug` message MUST ignore it
-per the forward-compatibility rule
-([wire-protocol.md §3.4](wire-protocol.md)).
+per the forward-compatibility rule.
 
 ### 5.1 `debug` — `capabilities` (editor → device, request)
 
@@ -611,8 +609,8 @@ shape as query responses but without `requestId`.
 ```
 
 **Delivery.** Unsolicited `debug` frames are **opportunistic** — the
-device drops them if TX is full, matching stream-frame semantics
-([wire-protocol.md §3.2](wire-protocol.md)). Debug telemetry must never
+device drops them if TX is full, matching stream-frame semantics.
+Debug telemetry must never
 starve must-deliver messages (eval responses, hw-input events).
 
 **Rate limiting.** Streaming channels emit at most once per
@@ -655,7 +653,7 @@ backpressure).
 
 7.1 A debugging agent connects to the device and follows this sequence:
 
-1. **Handshake.** Send `hello` per [wire-protocol.md §5.1](wire-protocol.md).
+1. **Handshake.** Send `hello`.
 2. **Discover.** Send `debug:capabilities`. Parse the channel list. If
    no response (or no `devtools` field), the firmware was built without
    devtools — the agent must fall back to eval-only debugging.

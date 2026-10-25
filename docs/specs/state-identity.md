@@ -2,9 +2,7 @@
 
 > Runtime/language spec for stable identity of anonymous stateful expressions.
 > Counterpart to [state.md](state.md), [compilation.md](compilation.md),
-> [top-level.md](top-level.md), [visualisation-projection.md](visualisation-projection.md),
-> and the app-side spec
-> [../../../docs/specs/state-identity.md](../../../docs/specs/state-identity.md).
+> [top-level.md](top-level.md) and [visualisation-projection.md](visualisation-projection.md).
 >
 > This document is the runtime source of truth. The app spec owns editor UX,
 > hidden metadata, and source decorations; this spec owns how evaluated code
