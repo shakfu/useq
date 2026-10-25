@@ -18,11 +18,11 @@
 
 (To be created)
 
-- `uSEQ/src/devtools/devtools.h` — public `dt::` namespace API; inline no-op stubs when `USEQ_DEVTOOLS` is not defined
-- `uSEQ/src/devtools/devtools.cpp` — state struct, collection logic, serialization, protocol handler
-- `uSEQ/src/firmware/firmware.cpp` — tick-loop instrumentation call sites (`dt::tick_begin`, `dt::mark`, `dt::tick_end`)
-- `uSEQ/src/firmware/serial_protocol.cpp` — `debug` message dispatch to `dt::handle_debug_message()`
-- `uSEQ/src/signal_engine/cold_eval.cpp` — eval-event instrumentation (`dt::event`)
+- `src/devtools/devtools.h` — public `dt::` namespace API; inline no-op stubs when `USEQ_DEVTOOLS` is not defined
+- `src/devtools/devtools.cpp` — state struct, collection logic, serialization, protocol handler
+- `src/firmware/firmware.cpp` — tick-loop instrumentation call sites (`dt::tick_begin`, `dt::mark`, `dt::tick_end`)
+- `src/firmware/serial_protocol.cpp` — `debug` message dispatch to `dt::handle_debug_message()`
+- `src/signal_engine/cold_eval.cpp` — eval-event instrumentation (`dt::event`)
 
 ---
 
@@ -54,7 +54,7 @@ system telemetry (timing, state, resources) that flows to a debugger
 or agent.
 
 1.4 The devtools system is **orthogonal to the existing `USEQ_DEBUG`
-system** (`uSEQ/src/utils/log.h`). `USEQ_DEBUG` is unstructured
+system** (`src/utils/log.h`). `USEQ_DEBUG` is unstructured
 printf-style logging for human consumption. Both may be compiled in
 simultaneously; they do not interact.
 
@@ -69,14 +69,8 @@ No string literals, no branches, no struct fields survive.
 
 2.2 Build configuration:
 
-- **PlatformIO** (`platformio.ini`): `-DUSEQ_DEVTOOLS=1` in
-  environments where devtools are desired (typically `musicthing`,
-  `musicthing-debug`, `musicthing-verbose`; never `minimal`).
-- **Meson** (`meson.build`): new boolean option `enable_devtools`
-  (default: `true` for desktop/test builds), maps to
-  `-DUSEQ_DEVTOOLS=1`.
-- **WASM**: not compiled in. The browser has its own devtools; firmware
-  devtools are for the physical device.
+- **CMake** (`CMakeLists.txt`): boolean option `USEQ_DEVTOOLS`
+  (default: `ON`), maps to `-DUSEQ_DEVTOOLS=1` on the libraries.
 
 2.3 The `USEQ_DEVTOOLS` gate is independent of `USEQ_DEBUG`,
 `ENABLE_PROFILING`, and `ENABLE_SERIAL_DEBUG`. Those flags are legacy
@@ -681,7 +675,7 @@ before can orient itself from this response alone.
 8.1 **Zero allocation.** All devtools state is in fixed-size static
 arrays. The `dt::` functions never call `malloc`, `new`, or grow any
 dynamic container. The JSON serialization uses the existing `JsonBuilder`
-(`uSEQ/src/utils/json_builder.h`), which builds strings on the stack
+(`src/utils/json_builder.h`), which builds strings on the stack
 via the project's `String` type.
 
 8.2 **No hot-path impact when disabled.** When `USEQ_DEVTOOLS` is not

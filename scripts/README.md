@@ -1,11 +1,7 @@
-# uSEQ Build Scripts
+# uSEQ Scripts
 
-Build and utility scripts for the uSEQ signal engine on the desktop.
+The build is the root `Makefile` and `CMakeLists.txt`. These are code generators and tools:
 
-- `build.sh`: build with Meson and Ninja.
-- `test.sh`: build and run the test suites; `-h` lists them.
 - `lisplibrary.py`: convert a LISP library to a C++ header.
-
-## Requirements
-
-Meson, Ninja and a C++17 compiler.
+- `generate_builtins.clj`, `builtins.edn`, `builtin_template.cpp`: generate the interpreter's builtins.
+- `run_bytecode_vm_golden.py`: runs bytecode VM golden fixtures against a probe, for `VM_REWRITE_PROPOSAL.md`; neither the fixtures nor the probe exist yet.

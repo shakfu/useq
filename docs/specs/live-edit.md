@@ -8,10 +8,10 @@
 
 **Note:** The `live-edit` feature is partially implemented. The wire-protocol dispatch and stub handler exist, but the compiler-side slot table, `SlotLoad`-based compilation, and WASM ABI export are not yet landed. The source files below reflect the current state.
 
-- `uSEQ/src/firmware/serial_protocol.cpp` — `handle_set_live_inputs()` dispatches `set-live-inputs` messages; currently a stub awaiting slot-table integration (see TODO at line ~611).
-- `uSEQ/src/firmware/serial_protocol.h` — declares `set-live-inputs` as a recognised message type.
-- `uSEQ/src/signal_engine/node_pool.h` — `NodeOp::SlotLoad` is the dedicated node type for live-edit slot reads (separate from `InputLoad` for hardware inputs — see spec section 3.1 for rationale).
-- `uSEQ/src/signal_engine/graph_builder.cpp` — future home of `live-edit` form recognition during builtin lowering.
+- `src/firmware/serial_protocol.cpp` — `handle_set_live_inputs()` dispatches `set-live-inputs` messages; currently a stub awaiting slot-table integration (see TODO at line ~611).
+- `src/firmware/serial_protocol.h` — declares `set-live-inputs` as a recognised message type.
+- `src/signal_engine/node_pool.h` — `NodeOp::SlotLoad` is the dedicated node type for live-edit slot reads (separate from `InputLoad` for hardware inputs — see spec section 3.1 for rationale).
+- `src/signal_engine/graph_builder.cpp` — future home of `live-edit` form recognition during builtin lowering.
 - `wasm/wasm_wrapper.cpp` — future home of `useq_set_live_inputs()` WASM ABI export (spec section 5.10).
 - `test/firmware/test_wire_protocol_contract.cpp` — F6/F6b tests for `set-live-inputs` protocol dispatch and ack shape.
 

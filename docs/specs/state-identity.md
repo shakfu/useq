@@ -10,14 +10,14 @@
 
 ### Source Files
 
-- `uSEQ/src/signal_engine/node_pool.h` - `state_values[]`,
+- `src/signal_engine/node_pool.h` - `state_values[]`,
   `state_update_roots[]`, `state_slot_count`, `NodeOp::LoadState`,
   `NodeOp::LoadDt`.
-- `uSEQ/src/signal_engine/graph_builder.{h,cpp}` - UGen and stateful primitive
+- `src/signal_engine/graph_builder.{h,cpp}` - UGen and stateful primitive
   compilation, keyword argument parsing, current anonymous slot allocation.
-- `uSEQ/src/signal_engine/executor.{h,cpp}` - dense-slot execution and
+- `src/signal_engine/executor.{h,cpp}` - dense-slot execution and
   `commit_state()`.
-- `uSEQ/src/signal_engine/cold_eval.{h,cpp}` - top-level eval, output
+- `src/signal_engine/cold_eval.{h,cpp}` - top-level eval, output
   assignment, dependency-triggered recompilation.
 - `wasm/wasm_wrapper.cpp` - WASM eval, time injection, output sampling,
   projection fork save/restore.

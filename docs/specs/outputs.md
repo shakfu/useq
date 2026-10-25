@@ -7,16 +7,16 @@
 
 ## Source files
 
-- `uSEQ/src/signal_engine/node_pool.h` — `OutputSlot` struct (root_node, lkg_value, valid); `NodePool::outputs[MAX_OUTPUTS]`; `prev_output_values[]`.
-- `uSEQ/src/signal_engine/graph_builder.cpp` — `resolve_output_index()` maps `a1`..`s8` to 0..23; output assignment compilation.
-- `uSEQ/src/signal_engine/graph_builder.h` — `resolve_output_index()` declaration.
-- `uSEQ/src/signal_engine/cold_eval.cpp` — top-level output assignment dispatch; `do_useq_clear()`; output source storage for recompilation.
-- `uSEQ/src/signal_engine/cold_eval.h` — `OutputSource` struct (arena offset/length for stored output programs).
-- `uSEQ/src/signal_engine/executor.cpp` — `execute_all_outputs()` samples every valid output; `commit_outputs()` updates `prev_output_values` and `lkg_value`.
-- `uSEQ/src/signal_engine/executor.h` — `ExecutionContext` (output_values, prev_outputs).
-- `uSEQ/src/uSEQ/output_manager.h` / `output_manager.cpp` — firmware-level output routing to hardware pins.
-- `uSEQ/src/output.h` — `HardwareOutput` struct, `DEFAULT_OUTPUT_CV`, `DEFAULT_OUTPUT_GATE` (not yet wired).
-- `uSEQ/src/firmware/hardware_io.cpp` — `write_outputs()` writes sampled values to DAC/GPIO.
+- `src/signal_engine/node_pool.h` — `OutputSlot` struct (root_node, lkg_value, valid); `NodePool::outputs[MAX_OUTPUTS]`; `prev_output_values[]`.
+- `src/signal_engine/graph_builder.cpp` — `resolve_output_index()` maps `a1`..`s8` to 0..23; output assignment compilation.
+- `src/signal_engine/graph_builder.h` — `resolve_output_index()` declaration.
+- `src/signal_engine/cold_eval.cpp` — top-level output assignment dispatch; `do_useq_clear()`; output source storage for recompilation.
+- `src/signal_engine/cold_eval.h` — `OutputSource` struct (arena offset/length for stored output programs).
+- `src/signal_engine/executor.cpp` — `execute_all_outputs()` samples every valid output; `commit_outputs()` updates `prev_output_values` and `lkg_value`.
+- `src/signal_engine/executor.h` — `ExecutionContext` (output_values, prev_outputs).
+- `src/uSEQ/output_manager.h` / `output_manager.cpp` — firmware-level output routing to hardware pins.
+- `src/output.h` — `HardwareOutput` struct, `DEFAULT_OUTPUT_CV`, `DEFAULT_OUTPUT_GATE` (not yet wired).
+- `src/firmware/hardware_io.cpp` — `write_outputs()` writes sampled values to DAC/GPIO.
 - `wasm/wasm_wrapper.cpp` — `resolve_output_name()` maps name strings to indices; `execute_at_time()` evaluates all outputs.
 - `test/signal_engine/test_signal_engine_golden.cpp` — output assignment, sampling, batch execution tests.
 

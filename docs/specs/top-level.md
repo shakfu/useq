@@ -8,12 +8,12 @@
 
 ## Source files
 
-- `uSEQ/src/signal_engine/cold_eval.cpp` — main top-level eval dispatch: `define`, `defn`, `do`, `if`, `let`, output assignment, transport commands (`useq_play`/`useq_pause`/`useq_stop`/`useq_rewind`/`useq_clear`), `do_set_bpm()`, cell mutation and dependency invalidation (`on_cell_changed()`).
-- `uSEQ/src/signal_engine/cold_eval.h` — `eval_cold()` entry point; `SignalEngine` struct; `EngineState` (transport state); `OutputSource` / `StateUpdateSource` (stored programs for recompilation).
-- `uSEQ/src/signal_engine/graph_builder.cpp` — `resolve_output_index()` maps output names to indices; output-assignment compilation.
-- `uSEQ/src/signal_engine/executor.{h,cpp}` — one-off execution of compiled top-level signal expressions.
-- `uSEQ/src/signal_engine/cell_store.h` / `cell_store.cpp` — `define`/`defn` write to cell and callable stores; `init_timing_defaults()` for `setbpm`/`settimesig`.
-- `uSEQ/src/firmware/serial_protocol.cpp` — wire-protocol dispatch for eval requests, quantised eval queue.
+- `src/signal_engine/cold_eval.cpp` — main top-level eval dispatch: `define`, `defn`, `do`, `if`, `let`, output assignment, transport commands (`useq_play`/`useq_pause`/`useq_stop`/`useq_rewind`/`useq_clear`), `do_set_bpm()`, cell mutation and dependency invalidation (`on_cell_changed()`).
+- `src/signal_engine/cold_eval.h` — `eval_cold()` entry point; `SignalEngine` struct; `EngineState` (transport state); `OutputSource` / `StateUpdateSource` (stored programs for recompilation).
+- `src/signal_engine/graph_builder.cpp` — `resolve_output_index()` maps output names to indices; output-assignment compilation.
+- `src/signal_engine/executor.{h,cpp}` — one-off execution of compiled top-level signal expressions.
+- `src/signal_engine/cell_store.h` / `cell_store.cpp` — `define`/`defn` write to cell and callable stores; `init_timing_defaults()` for `setbpm`/`settimesig`.
+- `src/firmware/serial_protocol.cpp` — wire-protocol dispatch for eval requests, quantised eval queue.
 - `wasm/wasm_wrapper.cpp` — `useq_eval()` calls `sig::eval_cold()`.
 - `test/signal_engine/test_signal_engine.cpp` — cold eval tests for define, defn, transport.
 - `test/signal_engine/test_signal_engine_golden.cpp` — golden semantics for define, defn, output assignment.

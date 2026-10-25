@@ -5,11 +5,11 @@
 
 ## Source files
 
-- `uSEQ/src/signal_engine/graph_builder.cpp` — `compile_lambda()`, `compile_call()`, `compile_variadic_arithmetic()`; callable inlining at call sites, variadic arithmetic left-folding.
-- `uSEQ/src/signal_engine/graph_builder.h` — `TimeContext` struct threaded through all compilation, `compile_call`/`compile_lambda` declarations.
-- `uSEQ/src/signal_engine/cold_eval.cpp` — `do_defn()` for top-level `defn`; stores callable param count and source text in `CellStore::callables`.
-- `uSEQ/src/signal_engine/cell_store.h` / `cell_store.cpp` — `CallableInfo` storage (param count, source offset/length) for named functions.
-- `uSEQ/src/signal_engine/node_pool.h` — `NodeOp::Add`/`Sub`/`Mul`/`Div`/`Min`/`Max` pairwise ops that variadic folding emits.
+- `src/signal_engine/graph_builder.cpp` — `compile_lambda()`, `compile_call()`, `compile_variadic_arithmetic()`; callable inlining at call sites, variadic arithmetic left-folding.
+- `src/signal_engine/graph_builder.h` — `TimeContext` struct threaded through all compilation, `compile_call`/`compile_lambda` declarations.
+- `src/signal_engine/cold_eval.cpp` — `do_defn()` for top-level `defn`; stores callable param count and source text in `CellStore::callables`.
+- `src/signal_engine/cell_store.h` / `cell_store.cpp` — `CallableInfo` storage (param count, source offset/length) for named functions.
+- `src/signal_engine/node_pool.h` — `NodeOp::Add`/`Sub`/`Mul`/`Div`/`Min`/`Max` pairwise ops that variadic folding emits.
 - `test/signal_engine/test_signal_engine.cpp` — `defn` creation and callable tests.
 - `test/signal_engine/test_signal_engine_golden.cpp` — golden tests for `defn`, variadic arithmetic, callable inlining, time-context inheritance.
 

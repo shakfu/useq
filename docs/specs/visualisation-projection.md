@@ -14,9 +14,9 @@
   - `project_from_fork()` — saves live state, installs fork state, runs sequential sample loop, saves fork advances, restores live state (spec section 4).
   - `useq_tick_and_project()` — combined ABI: phase 1 state-advancing tick, phase 2 projection (mode 0=none, 1=reset-fill, 2=extend-frontier) (spec section 7).
   - `execute_batch_sequential()` — stateful batch evaluation with state save/restore.
-- `uSEQ/src/signal_engine/executor.cpp` — `execute_all_outputs()`, `commit_state()`, `commit_outputs()` used by both live ticks and projection ticks.
-- `uSEQ/src/signal_engine/executor.h` — `ExecutionContext` struct (t, dt, cell_values, hw_inputs, prev_outputs, output_values, workspace).
-- `uSEQ/src/signal_engine/node_pool.h` — `NodePool` state arrays (state_values, prev_output_values, OutputSlot::lkg_value) that the fork clones.
+- `src/signal_engine/executor.cpp` — `execute_all_outputs()`, `commit_state()`, `commit_outputs()` used by both live ticks and projection ticks.
+- `src/signal_engine/executor.h` — `ExecutionContext` struct (t, dt, cell_values, hw_inputs, prev_outputs, output_values, workspace).
+- `src/signal_engine/node_pool.h` — `NodePool` state arrays (state_values, prev_output_values, OutputSlot::lkg_value) that the fork clones.
 
 ---
 

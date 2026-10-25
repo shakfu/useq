@@ -5,10 +5,10 @@
 
 ## Source files
 
-- `uSEQ/src/signal_engine/cold_eval.h` — `EngineState` struct (`is_playing` flag controls whether the engine re-evaluates outputs between user evals).
-- `uSEQ/src/signal_engine/cold_eval.cpp` — top-level eval dispatch; transport commands (`useq_play`, `useq_pause`, `useq_stop`) that toggle engine state.
-- `uSEQ/src/signal_engine/executor.cpp` — `execute_all_outputs()` / `execute_batch()` — the hot-path that the reactive dialect drives every tick.
-- `uSEQ/src/firmware/firmware.cpp` — firmware main loop checks `engine.state.is_playing` to decide whether to sample outputs.
+- `src/signal_engine/cold_eval.h` — `EngineState` struct (`is_playing` flag controls whether the engine re-evaluates outputs between user evals).
+- `src/signal_engine/cold_eval.cpp` — top-level eval dispatch; transport commands (`useq_play`, `useq_pause`, `useq_stop`) that toggle engine state.
+- `src/signal_engine/executor.cpp` — `execute_all_outputs()` / `execute_batch()` — the hot-path that the reactive dialect drives every tick.
+- `src/firmware/firmware.cpp` — firmware main loop checks `engine.state.is_playing` to decide whether to sample outputs.
 
 ---
 

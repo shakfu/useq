@@ -69,91 +69,23 @@ When ending a work session, finish the operational steps instead of leaving work
 
 ## Build Commands
 
-### Desktop/Standalone Build (Default for Development)
-```bash
-# Standard Meson build for desktop testing
-./scripts/build.sh
-# OR manually:
-meson setup build
-ninja -C build
+CMake, through the root `Makefile`:
 
-# Run standalone interpreter
-./build/standalone
+```bash
+make            # configure and build into build/ (Debug)
+make test       # build, then run every CTest suite
+make sanitize   # build and test with ASan and UBSan, in build-sanitize/
+make coverage   # build and test with coverage, in build-coverage/
+cd build && ctest -R test_ugens --output-on-failure   # one suite
 ```
 
-### PlatformIO Firmware Build (RECOMMENDED for Hardware)
-```bash
-# Enter PlatformIO environment (NixOS)
-nix-shell platformio.nix
-# Or with direnv: edit .envrc to use platformio.nix
-
-# Build firmware for Raspberry Pi Pico (default: Music Thing variant)
-./scripts/build_pio.sh                  # Build for musicthing
-./scripts/build_pio.sh hardware_v0_2    # Build for hardware v0.2
-./scripts/build_pio.sh hardware_v1_0    # Build for hardware v1.0
-
-# Flash to Pico
-./scripts/flash_pio.sh                  # Flash default variant
-./scripts/flash_pio.sh musicthing /dev/ttyACM0  # Flash to specific device
-
-# Convenience wrapper (recommended)
-./scripts/pio.sh build                  # Build
-./scripts/pio.sh flash                  # Flash
-./scripts/pio.sh clean                  # Clean builds
-./scripts/pio.sh monitor                # Open serial monitor
-./scripts/pio.sh size                   # Show firmware size
-./scripts/pio.sh list                   # List all environments
-
-# Direct PlatformIO commands
-pio run -e musicthing                   # Build
-pio run -e musicthing -t upload         # Flash
-pio run -e musicthing -t clean          # Clean
-pio device monitor                      # Serial monitor
-```
-
-### Arduino CLI Build (Legacy - Use PlatformIO Instead)
-```bash
-# Build firmware for Raspberry Pi Pico
-./scripts/build_arduino_cli.sh
-
-# Manual Arduino CLI build with specific settings:
-arduino-cli compile --fqbn rp2040:rp2040:generic:boot2=boot2_w25q080_2_padded_checksum,flash=8388608_7340032,freq=250,opt=Optimize3 uSEQ/
-
-# Flash to Pico
-./scripts/flash_arduino_cli.sh
-```
-
-### Testing
-```bash
-# Run all tests with Meson
-./scripts/test.sh
-
-# Run specific test suite
-./scripts/test.sh -s signal_engine       # Core signal engine tests
-./scripts/test.sh -s signal_engine_golden # Golden semantic tests
-./scripts/test.sh -s firmware_e2e        # Firmware end-to-end tests
-./scripts/test.sh -s flash_storage       # Flash persistence round-trips
-./scripts/test.sh -s ugens              # Unit generator tests
-
-# Run with verbose output
-./scripts/test.sh -v
-
-# Skip build (run tests only)
-./scripts/test.sh -f
-```
-
-### WASM Build
-```bash
-./scripts/build_wasm.sh
-# Serve WASM version
-python scripts/serve_wasm.py
-```
+`JOBS` defaults to 4; never build with every core (it has made the machine unusable). `TYPE` sets the build type, `CMAKE_ARGS` passes options such as `-DUSEQ_DEVTOOLS=OFF`.
 
 ## Core Architecture
 
 ### Project Structure
 ```
-/uSEQ/src/
+/src/
 ├── signal_engine/             # Signal compiler and runtime
 │   ├── graph_builder.{h,cpp}  # Compiler: ModuLisp → node graph
 │   ├── node_pool.{h,cpp}      # CSE, constant folding, node storage
@@ -236,7 +168,7 @@ User code → Tokenizer (token.cpp) → GraphBuilder (diagnostics) → SignalEng
 
 ### Important constraints
 
-- `ninja -j4` — never compile with full parallelism (bricks the machine)
+- `make` uses `JOBS=4` — never compile with full parallelism (bricks the machine)
 - Diagnostics are compile-time only — never allocated on the per-sample hot path
 
 ## Development Workflows
@@ -280,21 +212,9 @@ The firmware supports multiple hardware configurations:
 
 - **musicthing-verbose** - Extra verbose serial output
 
-### Arduino/PlatformIO Build Settings
-- **Board**: Generic RP2040 (Earle Philhower Pico core)
-- **CPU Speed**: 250MHz (Overclock)
-- **Flash**: 8MB (Sketch 1MB, FS: 7MB)
-- **Optimization**: -O3 (Optimize Even More)
-- **Boot Stage 2**: W25Q080 QSPI /2
-
 ### Compiler Flags
-- Desktop: `-DUSE_OWN_ARDUINO_STR`, `-DUSE_STD_IO`, `-DNO_ETL`
-- Arduino: Hardware-specific defines for Pico
-
-### Meson Configuration
-- Warning flags: `-Wall`, `-Wextra`, `-Wpedantic`, `-Wshadow`
-- Disabled: `-Wno-conversion`, `-Wno-unused-parameter`
-- Test builds: Located in `test_build/` directory
+- Desktop: `USE_OWN_ARDUINO_STR`, `USE_STD_IO` (public on `useq_utils`); `USEQ_DEVTOOLS=1` on the libraries by default
+- Warnings (`useq_options` in `CMakeLists.txt`): `-Wall`, `-Wextra`, `-Wpedantic`, `-Wshadow`; disabled: `-Wno-conversion`, `-Wno-unused-parameter`
 
 ## Real-time Constraints
 
@@ -306,17 +226,17 @@ The firmware supports multiple hardware configurations:
 
 ## Testing Strategy
 
-Test suites in `test/signal_engine/` and `test/firmware/`:
-- **signal_engine**: Core compiler + executor (136 test cases)
-- **signal_engine_golden**: Golden semantic tests (data-driven, 1000+ assertions)
-- **signal_engine_phase4**: Advanced features (robustness, edge cases)
-- **signal_engine_robustness**: Fuzz and stress tests
-- **ugens**: State-bearing unit generators (slew, env-follow, etc.)
-- **firmware_e2e**: Full tick-loop integration tests
-- **wire_protocol_contract**: Serial protocol contract tests
-- **flash_storage**: Persistence round-trip tests (via MockStorage)
-- **output_classification**: Output type classification
-- **live_edit**: Live-edit state identity tests
+Test suites in `test/signal_engine/` and `test/devtools/`, one CTest test each:
+- **test_signal_engine**: Core compiler + executor (138 test cases)
+- **test_signal_engine_golden**: Golden semantic tests (data-driven, 1000+ assertions)
+- **test_signal_engine_phase4**: Advanced features (robustness, edge cases)
+- **test_signal_engine_robustness**: Fuzz and stress tests
+- **test_ugens**: State-bearing unit generators (slew, env-follow, etc.)
+- **test_output_classification**: Output type classification
+- **test_live_edit**: Live-edit state identity tests
+- **test_state_identity**: Identity of anonymous stateful expressions
+- **test_devtools_contract**: Devtools debug protocol
+- **signal_engine_probe**: Smoke run of the engine
 
 Run tests frequently during development to ensure stability.
 
@@ -333,10 +253,10 @@ Run tests frequently during development to ensure stability.
 
 ## Critical Files to Understand
 
-1. `uSEQ/src/signal_engine/signal_engine.h` — composition struct (owns CellStore, NodePool, SourceArena)
-2. `uSEQ/src/signal_engine/graph_builder.cpp` — the compiler (ModuLisp → node DAG)
-3. `uSEQ/src/signal_engine/executor.cpp` — the hot path (per-sample node evaluation)
-4. `uSEQ/src/signal_engine/cold_eval.cpp` — cold path (REPL eval, cell/output management)
-5. `uSEQ/src/firmware/firmware.cpp` — tick loop (the main runtime loop)
+1. `src/signal_engine/signal_engine.h` — composition struct (owns CellStore, NodePool, SourceArena)
+2. `src/signal_engine/graph_builder.cpp` — the compiler (ModuLisp → node DAG)
+3. `src/signal_engine/executor.cpp` — the hot path (per-sample node evaluation)
+4. `src/signal_engine/cold_eval.cpp` — cold path (REPL eval, cell/output management)
+5. `src/firmware/firmware.cpp` — tick loop (the main runtime loop)
 6. `wasm/wasm_wrapper.cpp` — WASM bindings (15 exports for the web editor)
 7. `test/signal_engine/test_signal_engine_golden.cpp` — golden semantic tests

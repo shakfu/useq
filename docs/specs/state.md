@@ -22,11 +22,11 @@
 
 ### Source Files
 
-- `uSEQ/src/signal_engine/node_pool.h` — `NodeOp::LoadState` (read state slot), `NodeOp::LoadDt` (local dt leaf), `NodePool::state_values[]` (state slot storage), `state_update_roots[]` (per-slot update graph roots), `state_slot_count`, `make_state_load()`, `make_dt_load()`
-- `uSEQ/src/signal_engine/graph_builder.{h,cpp}` — `compile_integrate()` (allocates state slot, builds update graph), state-slot allocation during compilation
-- `uSEQ/src/signal_engine/executor.{h,cpp}` — `commit_state()` (post-tick state update from workspace), `LoadState`/`LoadDt` evaluation in the per-node dispatch
-- `uSEQ/src/signal_engine/cold_eval.{h,cpp}` — `SignalEngine::state_sources[]` (`StateUpdateSource` for recompilation), state migration across recompilation in `on_cell_changed()`
-- `uSEQ/src/signal_engine/types.h` — `MAX_STATE_SLOTS` (32)
+- `src/signal_engine/node_pool.h` — `NodeOp::LoadState` (read state slot), `NodeOp::LoadDt` (local dt leaf), `NodePool::state_values[]` (state slot storage), `state_update_roots[]` (per-slot update graph roots), `state_slot_count`, `make_state_load()`, `make_dt_load()`
+- `src/signal_engine/graph_builder.{h,cpp}` — `compile_integrate()` (allocates state slot, builds update graph), state-slot allocation during compilation
+- `src/signal_engine/executor.{h,cpp}` — `commit_state()` (post-tick state update from workspace), `LoadState`/`LoadDt` evaluation in the per-node dispatch
+- `src/signal_engine/cold_eval.{h,cpp}` — `SignalEngine::state_sources[]` (`StateUpdateSource` for recompilation), state migration across recompilation in `on_cell_changed()`
+- `src/signal_engine/types.h` — `MAX_STATE_SLOTS` (32)
 - `wasm/wasm_wrapper.cpp` — state save/restore in `execute_batch_sequential()` (visualisation does not corrupt live state), projection fork state cloning in `reset_projection_fork()`/`project_from_fork()`
 - `test/signal_engine/test_signal_engine_phase4.cpp` — state-bearing construct tests
 
@@ -167,7 +167,7 @@
 
 ## 4. State Identity and Recompilation
 
-4.1 The signal engine recompiles output graphs sub-tick whenever a dependency changes ([MAIN.md §3](MAIN.md)). For stateful cells to be useful, **state must survive recompilation**, otherwise every unrelated edit zeroes every integrator and the language is worse than no-state-at-all. (See `uSEQ/src/signal_engine/cold_eval.h` — StateUpdateSource stores source and deps for recompilation; `uSEQ/src/signal_engine/cold_eval.cpp` — on_cell_changed recompiles state update bodies, preserves state_values; `uSEQ/src/signal_engine/node_pool.h` — NodePool::state_values[] survives across recompilation.)
+4.1 The signal engine recompiles output graphs sub-tick whenever a dependency changes ([MAIN.md §3](MAIN.md)). For stateful cells to be useful, **state must survive recompilation**, otherwise every unrelated edit zeroes every integrator and the language is worse than no-state-at-all. (See `src/signal_engine/cold_eval.h` — StateUpdateSource stores source and deps for recompilation; `src/signal_engine/cold_eval.cpp` — on_cell_changed recompiles state update bodies, preserves state_values; `src/signal_engine/node_pool.h` — NodePool::state_values[] survives across recompilation.)
 
 4.2 **State identity is the cell's symbol.** A `defstate` named `phase` is *the same state cell* across recompilations as long as the symbol `phase` continues to refer to a `defstate` declaration. Edits to the update body do not reset the cell.
 
@@ -206,7 +206,7 @@ mutate the live state slots described in this section.
 
 ## 5. `integrate` — the Canonical Primitive
 
-5.1 `integrate` is the most common state-bearing primitive, and the spec promotes it to a first-class operator. **`(integrate x)` is the signal `∫₀ᵗ x(τ) dτ`** — the running total of `x` over time. (See `uSEQ/src/signal_engine/graph_builder.cpp` — compile_integrate allocates state slot, builds LoadState + LoadDt + Mul + Add update graph, sets state_update_roots.)
+5.1 `integrate` is the most common state-bearing primitive, and the spec promotes it to a first-class operator. **`(integrate x)` is the signal `∫₀ᵗ x(τ) dτ`** — the running total of `x` over time. (See `src/signal_engine/graph_builder.cpp` — compile_integrate allocates state slot, builds LoadState + LoadDt + Mul + Add update graph, sets state_update_roots.)
 
 5.2 Semantically equivalent to:
 
@@ -375,7 +375,7 @@ local clock is part of the musical idea.
 
 ## 8. Local `dt`, State, and Time Contexts
 
-8.1 The signal graph exposes two explicit delta-time leaves. (See `uSEQ/src/signal_engine/node_pool.h` — NodeOp::LoadDt; `uSEQ/src/signal_engine/executor.h` — ExecutionContext.dt, wall-clock delta passed per tick.)
+8.1 The signal graph exposes two explicit delta-time leaves. (See `src/signal_engine/node_pool.h` — NodeOp::LoadDt; `src/signal_engine/executor.h` — ExecutionContext.dt, wall-clock delta passed per tick.)
 
 - **`dt-wall`** is the actual wall-clock duration since the previous tick.
   It is independent of any local time context.

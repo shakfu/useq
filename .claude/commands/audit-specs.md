@@ -57,8 +57,8 @@ Spawn one subagent per spec in scope, all in parallel. Each subagent:
 6. **Emit JSON** — return per-spec object matching the schema
 
 Key search paths per spec:
-- `uSEQ/src/signal_engine/` — compiler, executor, cold eval, node pool, diagnostics, state registry
-- `uSEQ/src/firmware/` — firmware tick loop, serial protocol, hardware I/O, flash storage
+- `src/signal_engine/` — compiler, executor, cold eval, node pool, diagnostics, state registry
+- `src/firmware/` — firmware tick loop, serial protocol, hardware I/O, flash storage
 - `wasm/wasm_wrapper.cpp` — WASM bindings and ABI
 - `test/` — test coverage
 - `docs/specs/` — the specs themselves

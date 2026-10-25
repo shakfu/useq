@@ -6,10 +6,10 @@
 
 ## Source files
 
-- `uSEQ/src/signal_engine/graph_builder.cpp` — `compile_prev()` resolves the output name to an index and emits `PrevOutputLoad`; bare output names in expression position also emit `PrevOutputLoad` via `compile_symbol()`.
-- `uSEQ/src/signal_engine/node_pool.h` — `NodeOp::PrevOutputLoad` (imm = output_index); `make_prev_output_load()`; `NodePool::prev_output_values[]`.
-- `uSEQ/src/signal_engine/executor.cpp` — `PrevOutputLoad` case reads `prev_output_values[idx]`; `commit_outputs()` copies current output values to `prev_output_values` after each tick.
-- `uSEQ/src/signal_engine/executor.h` — `ExecutionContext::prev_outputs` pointer.
+- `src/signal_engine/graph_builder.cpp` — `compile_prev()` resolves the output name to an index and emits `PrevOutputLoad`; bare output names in expression position also emit `PrevOutputLoad` via `compile_symbol()`.
+- `src/signal_engine/node_pool.h` — `NodeOp::PrevOutputLoad` (imm = output_index); `make_prev_output_load()`; `NodePool::prev_output_values[]`.
+- `src/signal_engine/executor.cpp` — `PrevOutputLoad` case reads `prev_output_values[idx]`; `commit_outputs()` copies current output values to `prev_output_values` after each tick.
+- `src/signal_engine/executor.h` — `ExecutionContext::prev_outputs` pointer.
 - `wasm/wasm_wrapper.cpp` — `execute_at_time()` updates `prev_output_values` after each tick; `ProjectionFork` clones `prev_output_values` for projection.
 - `test/signal_engine/test_signal_engine_golden.cpp` — "explicit prev reads previous committed sample", "self-reference via prev for integration", "prev with non-output name is Type" tests.
 - `test/signal_engine/test_signal_engine.cpp` — `PrevOutputLoad` node construction and execution tests.

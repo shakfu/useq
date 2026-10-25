@@ -9,20 +9,20 @@
 
 ### Source Files
 
-- `uSEQ/src/signal_engine/graph_builder.{h,cpp}` — `GraphBuilder`: compilation entry points, form dispatch table, constant folding, time-context propagation, CSE, dependency tracking, signal-context rejection, error reporting with fuzzy match
-- `uSEQ/src/signal_engine/node_pool.{h,cpp}` — `NodePool`, `Node` (the node-graph representation), `NodeOp` enum (all node operations), hash-cons CSE table, topological sort (`rebuild_execution_order`), state slots, constant-folding helpers (`eval_unary`, `eval_binop`, `eval_ternary`)
-- `uSEQ/src/signal_engine/token.{h,cpp}` — `TokenStream`: zero-allocation tokenizer, `Token` with source spans
-- `uSEQ/src/signal_engine/cold_eval.{h,cpp}` — `eval_cold()`: parse + compile + dispatch, `on_cell_changed()` for dependency-driven recompilation
-- `uSEQ/src/signal_engine/executor.{h,cpp}` — `execute_all_outputs()`: single-sample forward pass (the hot path), `commit_state()`
-- `uSEQ/src/signal_engine/types.h` — limits (`MAX_TOTAL_NODES`, `MAX_STATE_SLOTS`, `MAX_INLINE_DEPTH`, etc.)
-- `uSEQ/src/signal_engine/symbols.def` — X-macro symbol table (builtins, side-effect forms, output names)
-- `uSEQ/src/signal_engine/diagnostics.{h,cpp}` — `Diagnostic` struct, `find_fuzzy_match()` for "did you mean" suggestions
+- `src/signal_engine/graph_builder.{h,cpp}` — `GraphBuilder`: compilation entry points, form dispatch table, constant folding, time-context propagation, CSE, dependency tracking, signal-context rejection, error reporting with fuzzy match
+- `src/signal_engine/node_pool.{h,cpp}` — `NodePool`, `Node` (the node-graph representation), `NodeOp` enum (all node operations), hash-cons CSE table, topological sort (`rebuild_execution_order`), state slots, constant-folding helpers (`eval_unary`, `eval_binop`, `eval_ternary`)
+- `src/signal_engine/token.{h,cpp}` — `TokenStream`: zero-allocation tokenizer, `Token` with source spans
+- `src/signal_engine/cold_eval.{h,cpp}` — `eval_cold()`: parse + compile + dispatch, `on_cell_changed()` for dependency-driven recompilation
+- `src/signal_engine/executor.{h,cpp}` — `execute_all_outputs()`: single-sample forward pass (the hot path), `commit_state()`
+- `src/signal_engine/types.h` — limits (`MAX_TOTAL_NODES`, `MAX_STATE_SLOTS`, `MAX_INLINE_DEPTH`, etc.)
+- `src/signal_engine/symbols.def` — X-macro symbol table (builtins, side-effect forms, output names)
+- `src/signal_engine/diagnostics.{h,cpp}` — `Diagnostic` struct, `find_fuzzy_match()` for "did you mean" suggestions
 - `test/signal_engine/test_signal_engine.cpp` — compilation and execution tests
 - `test/signal_engine/test_signal_engine_golden.cpp` — golden semantic tests
 
-1.1 Every signal expression is compiled to a **node graph** — a finite, acyclic, topologically-sortable structure of pure-arithmetic nodes. The exact graph format is engine-specific (register bytecode in the current VM; flat node array in the redesign); the abstract model is the same. (See `uSEQ/src/signal_engine/node_pool.h` — Node struct, NodeOp enum, the flat node array; `uSEQ/src/signal_engine/graph_builder.{h,cpp}` — compilation to node graph.)
+1.1 Every signal expression is compiled to a **node graph** — a finite, acyclic, topologically-sortable structure of pure-arithmetic nodes. The exact graph format is engine-specific (register bytecode in the current VM; flat node array in the redesign); the abstract model is the same. (See `src/signal_engine/node_pool.h` — Node struct, NodeOp enum, the flat node array; `src/signal_engine/graph_builder.{h,cpp}` — compilation to node graph.)
 
-1.2 Compilation is **always at least these passes**: parse → name resolution (cells, locals, hardware inputs, builtins) → constant folding → time-context propagation → builtin lowering → dead-code elimination → CSE / hash-consing → register/node allocation. (See `uSEQ/src/signal_engine/token.cpp` — parse/tokenize; `uSEQ/src/signal_engine/graph_builder.cpp` — name resolution in compile_symbol, constant folding in make_binop/make_unary, time-context via TimeContext, builtin lowering in form_table dispatch, CSE in NodePool::intern_node; `uSEQ/src/signal_engine/node_pool.cpp` — hash-consing, rebuild_execution_order, gc_unreachable_nodes.)
+1.2 Compilation is **always at least these passes**: parse → name resolution (cells, locals, hardware inputs, builtins) → constant folding → time-context propagation → builtin lowering → dead-code elimination → CSE / hash-consing → register/node allocation. (See `src/signal_engine/token.cpp` — parse/tokenize; `src/signal_engine/graph_builder.cpp` — name resolution in compile_symbol, constant folding in make_binop/make_unary, time-context via TimeContext, builtin lowering in form_table dispatch, CSE in NodePool::intern_node; `src/signal_engine/node_pool.cpp` — hash-consing, rebuild_execution_order, gc_unreachable_nodes.)
 
 1.3 **Pervasive constant folding.** Any pure operation on constant inputs is evaluated at compile time. This composes transitively: deeply nested pure subexpressions collapse to a single `Const` node.
 
@@ -30,9 +30,9 @@
 
 1.5 **A node graph is not always a signal.** Most node graphs are persistent and re-run per sample (the signal case). Some are one-off — the engine compiles a top-level form to a graph, executes it once, discards it. The compile-time rejection rules in §3 apply to any code being compiled to a node graph, regardless of whether the graph will be re-run or executed once.
 
-1.6 **Dependency set.** Every compiled graph carries the set of cell symbols it inlined or loaded — including stateful (`defstate`) cells whose update bodies are recompiled when their dependencies change. The runtime indexes outputs by their dependency sets so cell mutations can target precisely the affected graphs. (See `uSEQ/src/signal_engine/graph_builder.h` — GraphBuildResult.dep_cells, GraphBuilder.dep_cells, add_dependency; `uSEQ/src/signal_engine/node_pool.h` — OutputDeps; `uSEQ/src/signal_engine/cold_eval.cpp` — on_cell_changed walks output_deps to find affected graphs.)
+1.6 **Dependency set.** Every compiled graph carries the set of cell symbols it inlined or loaded — including stateful (`defstate`) cells whose update bodies are recompiled when their dependencies change. The runtime indexes outputs by their dependency sets so cell mutations can target precisely the affected graphs. (See `src/signal_engine/graph_builder.h` — GraphBuildResult.dep_cells, GraphBuilder.dep_cells, add_dependency; `src/signal_engine/node_pool.h` — OutputDeps; `src/signal_engine/cold_eval.cpp` — on_cell_changed walks output_deps to find affected graphs.)
 
-1.7 **Invalidation is proactive, recompilation is lazy.** Cell mutation marks affected graphs dirty immediately. Dirty graphs are recompiled at the next sampling boundary, never on the per-sample hot path. (See `uSEQ/src/signal_engine/cold_eval.cpp` — on_cell_changed triggers recompilation for dependent outputs.)
+1.7 **Invalidation is proactive, recompilation is lazy.** Cell mutation marks affected graphs dirty immediately. Dirty graphs are recompiled at the next sampling boundary, never on the per-sample hot path. (See `src/signal_engine/cold_eval.cpp` — on_cell_changed triggers recompilation for dependent outputs.)
 
 1.8 **Loops.** `for` is unrolled at compile time when the collection is compile-time-resolvable (literal vector of constants, cell-bound numeric vector, `(range a b)` with constant args, etc.). Maximum unroll: 64 iterations. Larger or dynamic collections are an error in signal context. `while` with non-trivial dynamic exit conditions is currently deferred; treat it as effectively top-level only for now.
 
@@ -46,7 +46,7 @@
 
 The semantics of `defstate`/`integrate`/UGens/`time-as`/`rate-as` and their interaction with local time contexts live in [state.md](state.md). This section captures only what the compilation pipeline needs to know.
 
-2.1 **State-slot allocation is a compile pass.** After name resolution and CSE, the compiler walks the graph and assigns a stable slot index to every state-bearing node (`defstate` cell, `integrate` call, UGen instance, `rate-as` local clock, and any per-call-site scratch required by a primitive). The slot index is part of the compiled graph; the slot vector is part of the runtime state. (See `uSEQ/src/signal_engine/graph_builder.cpp` — compile_integrate allocates state_slot_count++; `uSEQ/src/signal_engine/node_pool.h` — NodePool::state_values[], state_update_roots[], state_slot_count, NodeOp::LoadState.)
+2.1 **State-slot allocation is a compile pass.** After name resolution and CSE, the compiler walks the graph and assigns a stable slot index to every state-bearing node (`defstate` cell, `integrate` call, UGen instance, `rate-as` local clock, and any per-call-site scratch required by a primitive). The slot index is part of the compiled graph; the slot vector is part of the runtime state. (See `src/signal_engine/graph_builder.cpp` — compile_integrate allocates state_slot_count++; `src/signal_engine/node_pool.h` — NodePool::state_values[], state_update_roots[], state_slot_count, NodeOp::LoadState.)
 
 2.2 **CSE applies to state-bearing nodes.** Two referentially-equal state-bearing nodes (same operator, same input subgraph, same local-clock context, same identity keywords) hash-cons to a single node and share one state slot. Different inputs, different `rate-as` contexts, or different `:id` / `:fresh` options produce distinct slots. This is FRP-correct: structurally identical state-bearing constructs *are* the same accumulator unless the user supplies distinct identity.
 
@@ -64,7 +64,7 @@ The semantics of `defstate`/`integrate`/UGens/`time-as`/`rate-as` and their inte
 
 3.1 An expression is in **signal context** iff it is being compiled to a node graph (§1.5). The same rejection rules apply whether the graph will be sampled forever or executed once for performance.
 
-3.2 **Side-effect forms are rejected.** This includes (non-exhaustive): `define`, `defn`, `defstate` (state declaration is a top-level act, not a signal-context one — see [state.md §2.9](state.md)), output assignments (`a1`..`s8`, `q0`), `schedule`, `unschedule`, transport commands (`useq-play`, etc.), `eval`, `setbpm`, `settimesig`, `print`, `perf`, `timeit`. (See `uSEQ/src/signal_engine/graph_builder.cpp` — is_side_effect_form checks symbols tagged "side_effect" in symbols.def; `uSEQ/src/signal_engine/symbols.def` — side-effect symbol tags.)
+3.2 **Side-effect forms are rejected.** This includes (non-exhaustive): `define`, `defn`, `defstate` (state declaration is a top-level act, not a signal-context one — see [state.md §2.9](state.md)), output assignments (`a1`..`s8`, `q0`), `schedule`, `unschedule`, transport commands (`useq-play`, etc.), `eval`, `setbpm`, `settimesig`, `print`, `perf`, `timeit`. (See `src/signal_engine/graph_builder.cpp` — is_side_effect_form checks symbols tagged "side_effect" in symbols.def; `src/signal_engine/symbols.def` — side-effect symbol tags.)
 
 3.3 **Side effects are rejected anywhere in the subtree**, not just at the top of the form. `(a1 (if (> beat 0.5) (define x 1) 0))` is an error.
 
@@ -74,7 +74,7 @@ The semantics of `defstate`/`integrate`/UGens/`time-as`/`rate-as` and their inte
 
 3.6 **Dynamic `eval` is rejected in signal context.** `(eval string)` is top-level only.
 
-3.7 **Unresolvable symbols are rejected** with a fuzzy-match suggestion ("did you mean `beat`?") when one is plausible. (See `uSEQ/src/signal_engine/graph_builder.cpp` — report_error_with_fuzzy_match; `uSEQ/src/signal_engine/diagnostics.cpp` — find_fuzzy_match, Levenshtein distance, prefix match, case-insensitive match.)
+3.7 **Unresolvable symbols are rejected** with a fuzzy-match suggestion ("did you mean `beat`?") when one is plausible. (See `src/signal_engine/graph_builder.cpp` — report_error_with_fuzzy_match; `src/signal_engine/diagnostics.cpp` — find_fuzzy_match, Levenshtein distance, prefix match, case-insensitive match.)
 
 3.8 **Type errors the compiler can prove** are rejected (e.g. arithmetic on a string-cell where the operator has no string overload).
 

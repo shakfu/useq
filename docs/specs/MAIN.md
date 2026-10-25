@@ -19,25 +19,25 @@
 
 Core signal engine (shared by firmware and WASM):
 
-- `uSEQ/src/signal_engine/signal_engine.h` — convenience header, includes all signal engine components
-- `uSEQ/src/signal_engine/types.h` — limits, constants, type aliases (`SymbolID`, `NODE_NONE`, `MAX_OUTPUTS`, etc.)
-- `uSEQ/src/signal_engine/cold_eval.{h,cpp}` — cold-path evaluation (`eval_cold`), `SignalEngine` struct, dependency tracking (`on_cell_changed`), bulk recompilation
-- `uSEQ/src/signal_engine/cell_store.{h,cpp}` — `CellStore`, `Cell`, `CallableInfo`, `SourceArena`, data pool
-- `uSEQ/src/signal_engine/node_pool.{h,cpp}` — `NodePool`, `Node`, `OutputSlot`, CSE hash-cons table, state slots, topological sort
-- `uSEQ/src/signal_engine/graph_builder.{h,cpp}` — `GraphBuilder`, compilation passes, form dispatch, dependency tracking, error reporting
-- `uSEQ/src/signal_engine/executor.{h,cpp}` — `execute_all_outputs`, `execute_batch`, `commit_outputs`, `commit_state`
-- `uSEQ/src/signal_engine/token.{h,cpp}` — tokenizer, `Token`, `TokenStream`
-- `uSEQ/src/signal_engine/diagnostics.{h,cpp}` — `Diagnostic`, severity/category enums, `find_fuzzy_match`
-- `uSEQ/src/signal_engine/symbols.def` — X-macro symbol table (builtins, keywords, output names)
+- `src/signal_engine/signal_engine.h` — convenience header, includes all signal engine components
+- `src/signal_engine/types.h` — limits, constants, type aliases (`SymbolID`, `NODE_NONE`, `MAX_OUTPUTS`, etc.)
+- `src/signal_engine/cold_eval.{h,cpp}` — cold-path evaluation (`eval_cold`), `SignalEngine` struct, dependency tracking (`on_cell_changed`), bulk recompilation
+- `src/signal_engine/cell_store.{h,cpp}` — `CellStore`, `Cell`, `CallableInfo`, `SourceArena`, data pool
+- `src/signal_engine/node_pool.{h,cpp}` — `NodePool`, `Node`, `OutputSlot`, CSE hash-cons table, state slots, topological sort
+- `src/signal_engine/graph_builder.{h,cpp}` — `GraphBuilder`, compilation passes, form dispatch, dependency tracking, error reporting
+- `src/signal_engine/executor.{h,cpp}` — `execute_all_outputs`, `execute_batch`, `commit_outputs`, `commit_state`
+- `src/signal_engine/token.{h,cpp}` — tokenizer, `Token`, `TokenStream`
+- `src/signal_engine/diagnostics.{h,cpp}` — `Diagnostic`, severity/category enums, `find_fuzzy_match`
+- `src/signal_engine/symbols.def` — X-macro symbol table (builtins, keywords, output names)
 
 Firmware composition:
 
-- `uSEQ/src/firmware/firmware.{h,cpp}` — `Firmware` struct (composition root), `init()`, `tick()`, watchdog
-- `uSEQ/src/firmware/serial_protocol.{h,cpp}` — `SerialProtocol`, JSON wire protocol, hello/ping/eval/stream-config handlers
-- `uSEQ/src/firmware/hardware_io.{h,cpp}` — `HardwareIO`, pin access, input sampling, output writing, LED states
-- `uSEQ/src/firmware/flash_storage.{h,cpp}` — `FlashStorage`, binary save/load, CRC32 checksum
-- `uSEQ/src/firmware/dsp_engine.{h,cpp}` — `DSPEngine`, core 1 audio-rate DSP (optional)
-- `uSEQ/src/firmware/i2c_network.{h,cpp}` — `I2CNetwork`, multi-module I2C communication (optional)
+- `src/firmware/firmware.{h,cpp}` — `Firmware` struct (composition root), `init()`, `tick()`, watchdog
+- `src/firmware/serial_protocol.{h,cpp}` — `SerialProtocol`, JSON wire protocol, hello/ping/eval/stream-config handlers
+- `src/firmware/hardware_io.{h,cpp}` — `HardwareIO`, pin access, input sampling, output writing, LED states
+- `src/firmware/flash_storage.{h,cpp}` — `FlashStorage`, binary save/load, CRC32 checksum
+- `src/firmware/dsp_engine.{h,cpp}` — `DSPEngine`, core 1 audio-rate DSP (optional)
+- `src/firmware/i2c_network.{h,cpp}` — `I2CNetwork`, multi-module I2C communication (optional)
 
 WASM build:
 
@@ -45,8 +45,8 @@ WASM build:
 
 Port abstractions:
 
-- `uSEQ/src/ports/IStorage.h` — testable storage interface for flash persistence
-- `uSEQ/src/ports/mocks/MockStorage.h` — in-memory storage for desktop tests
+- `src/ports/IStorage.h` — testable storage interface for flash persistence
+- `src/ports/mocks/MockStorage.h` — in-memory storage for desktop tests
 
 Tests:
 
@@ -93,13 +93,13 @@ Language-wide degradation contracts. Cited from feature sub-specs.
 
 ## 3. Performance Targets
 
-3.1 **The hot path (per-sample evaluation) never allocates, never does string-keyed lookup, never compiles.** All compilation work happens between ticks. (See `uSEQ/src/signal_engine/executor.cpp` — execute_all_outputs, flat array traversal, no allocation; `uSEQ/src/signal_engine/cold_eval.cpp` — eval_cold, all compilation here, not on hot path.)
+3.1 **The hot path (per-sample evaluation) never allocates, never does string-keyed lookup, never compiles.** All compilation work happens between ticks. (See `src/signal_engine/executor.cpp` — execute_all_outputs, flat array traversal, no allocation; `src/signal_engine/cold_eval.cpp` — eval_cold, all compilation here, not on hot path.)
 
 3.2 **Recompilation is sub-tick.** A typical signal recompiles in well under one millisecond. The user perceives cell redefinition as instantaneous.
 
 3.3 **Invalidation is proactive, recompilation is lazy.** Cell mutation marks affected graphs dirty immediately. Dirty graphs are recompiled at the next sampling boundary, never on the per-sample hot path.
 
-3.4 **Pervasive constant folding.** Any pure operation on constant inputs is evaluated at compile time. This composes transitively: deeply nested pure subexpressions collapse to a single `Const` node. (See `uSEQ/src/signal_engine/node_pool.cpp` — make_binop, make_unary fold to Const when both/single input is Const; `uSEQ/src/signal_engine/node_pool.h` — eval_unary, eval_binop, eval_ternary, constant evaluation helpers.)
+3.4 **Pervasive constant folding.** Any pure operation on constant inputs is evaluated at compile time. This composes transitively: deeply nested pure subexpressions collapse to a single `Const` node. (See `src/signal_engine/node_pool.cpp` — make_binop, make_unary fold to Const when both/single input is Const; `src/signal_engine/node_pool.h` — eval_unary, eval_binop, eval_ternary, constant evaluation helpers.)
 
 3.5 **Tick rate.** All current targets are control-rate (~1 kHz tick). Audio-rate (≥ 44.1 kHz) is a future direction; semantics are unchanged but per-sample budget tightens dramatically.
 

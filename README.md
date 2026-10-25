@@ -22,22 +22,19 @@ More info from [https://www.emutelabinstruments.co.uk/useq/](https://www.emutela
 
 ## Canonical Specs
 
-The firmware/language specs live in [docs/specs/MAIN.md](docs/specs/MAIN.md).
+The language specs live in [docs/specs/MAIN.md](docs/specs/MAIN.md).
 
-## Building the Firmware
+## Building
 
-The firmware is in the [uSEQ](./uSEQ/) folder.
+The ModuLisp signal engine and its tests, for the desktop, with CMake (3.16 or later) and a C++17 compiler:
 
-Build the firmware in Arduino IDE, using the [Earle Philhower Pico core](https://github.com/earlephilhower/arduino-pico).
+```text
+make            # configure and build into build/
+make test       # build, then run the test suites
+make sanitize   # the same with ASan and UBSan
+make help       # targets and variables
+```
 
-| Setting  | Value |
-| ------------- | ------------- |
-| Board  | Generic RP2040  |
-| Boot Stage 2  | W25Q080 QSPI /2  |
-| Flash Size | 8MB (Sketch 1MB, FS: 7MB) |
-| CPU Speed | 250MHz (Overclock) |
-| Optimize | Optimize Even More (-O3) |
-
-Overclock the Pico at 250Mhz and set the optimisation level to -O3.
+The engine is the `useq_signal_engine` library. Another CMake project can add this directory with `add_subdirectory` and link it; the tests then build only with `-DUSEQ_TESTS=ON`.
 
 We welcome pull requests.

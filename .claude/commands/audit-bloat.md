@@ -59,10 +59,10 @@ Spawn these in parallel:
 
 | Agent | Scope | Focus |
 |-------|-------|-------|
-| **interpreter** | `uSEQ/src/modulisp/` including `lisp/` | Interpreter bloat, unnecessary abstraction in parser/evaluator/environment, over-engineered value types or dispatch |
-| **signal-engine** | `uSEQ/src/signal_engine/` | Node pool complexity, compilation overhead, unnecessary abstraction in the bytecode VM |
-| **hardware-io** | `uSEQ/src/uSEQ/`, `uSEQ/src/io/`, `uSEQ/src/ports/`, `uSEQ/src/firmware/`, `uSEQ/src/dsp/` | Hardware abstraction bloat, unnecessary I/O layering, dead variant code, DSP over-engineering |
-| **cross-cutting** | Entire `uSEQ/src/`, `wasm/`, `test/` | Duplicate implementations across modules, concepts named differently in different places, data flowing through unnecessary intermediate representations, WASM wrapper bloat |
+| **interpreter** | `src/modulisp/` including `lisp/` | Interpreter bloat, unnecessary abstraction in parser/evaluator/environment, over-engineered value types or dispatch |
+| **signal-engine** | `src/signal_engine/` | Node pool complexity, compilation overhead, unnecessary abstraction in the bytecode VM |
+| **hardware-io** | `src/uSEQ/`, `src/io/`, `src/ports/`, `src/firmware/`, `src/dsp/` | Hardware abstraction bloat, unnecessary I/O layering, dead variant code, DSP over-engineering |
+| **cross-cutting** | Entire `src/`, `wasm/`, `test/` | Duplicate implementations across modules, concepts named differently in different places, data flowing through unnecessary intermediate representations, WASM wrapper bloat |
 
 ### Thorough mode (6-8 agents)
 

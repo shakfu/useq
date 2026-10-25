@@ -5,11 +5,11 @@
 
 ## Source files
 
-- `uSEQ/src/signal_engine/graph_builder.cpp` — `input_index_for_name()` maps `"in1"`/`"in2"`/`"ain1"`/`"ain2"` to integer indices; `compile_symbol()` emits `InputLoad` nodes for input names.
-- `uSEQ/src/signal_engine/node_pool.h` — `NodeOp::InputLoad` (imm = input_index); `make_input_load()`.
-- `uSEQ/src/signal_engine/executor.cpp` — `InputLoad` case reads from `hw_inputs[]` array during sampling.
-- `uSEQ/src/firmware/hardware_io.h` / `hardware_io.cpp` — `HardwareIO::read_inputs()` samples physical pins into `inputs[]`; `INP_I1`..`INP_ZSWITCH` enum mapping hardware channels to array indices.
-- `uSEQ/src/input.h` — `HardwareInput` struct and `HardwareInputType` enum (not yet wired in).
+- `src/signal_engine/graph_builder.cpp` — `input_index_for_name()` maps `"in1"`/`"in2"`/`"ain1"`/`"ain2"` to integer indices; `compile_symbol()` emits `InputLoad` nodes for input names.
+- `src/signal_engine/node_pool.h` — `NodeOp::InputLoad` (imm = input_index); `make_input_load()`.
+- `src/signal_engine/executor.cpp` — `InputLoad` case reads from `hw_inputs[]` array during sampling.
+- `src/firmware/hardware_io.h` / `hardware_io.cpp` — `HardwareIO::read_inputs()` samples physical pins into `inputs[]`; `INP_I1`..`INP_ZSWITCH` enum mapping hardware channels to array indices.
+- `src/input.h` — `HardwareInput` struct and `HardwareInputType` enum (not yet wired in).
 - `wasm/wasm_wrapper.cpp` — `g_hw_inputs[32]` static array; `useq_set_input_value()` for host injection in WASM mode.
 - `test/signal_engine/test_signal_engine_golden.cpp` — "hardware input leaves read injected input values" section.
 

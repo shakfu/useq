@@ -8,14 +8,14 @@
 
 ## Source files
 
-- `uSEQ/src/signal_engine/node_pool.h` — `NodeOp::RawTimeLoad` (the `t` leaf); `NodeOp::LoadDt`; `NodeOp::USin`/`UCos`/`Sin`/`Cos` (unipolar/bipolar waveforms); `NodeOp::Fmod` (phasor wrapping); `NodeOp::BiToUni`/`UniToBi`.
-- `uSEQ/src/signal_engine/graph_builder.cpp` — `compile_symbol()` emits `RawTimeLoad` for `t`; phasor derivation from timing cells (`beat`, `bar`, `phrase`, `section`, `beat-num`, `bar-num`, `beat-dur`, `bar-dur`).
-- `uSEQ/src/signal_engine/graph_builder.h` — `TimeContext` struct carries the local time node through compilation.
-- `uSEQ/src/signal_engine/cell_store.h` / `cell_store.cpp` — `init_timing_defaults()` populates `bpm`, `beats-per-bar`, `bars-per-phrase`, `phrases-per-section` cells.
-- `uSEQ/src/signal_engine/executor.cpp` — `ExecutionContext::t` and `ExecutionContext::dt`; `RawTimeLoad` returns `ctx.t`.
-- `uSEQ/src/firmware/firmware.cpp` — sets `ctx.t` from the hardware clock before each tick.
+- `src/signal_engine/node_pool.h` — `NodeOp::RawTimeLoad` (the `t` leaf); `NodeOp::LoadDt`; `NodeOp::USin`/`UCos`/`Sin`/`Cos` (unipolar/bipolar waveforms); `NodeOp::Fmod` (phasor wrapping); `NodeOp::BiToUni`/`UniToBi`.
+- `src/signal_engine/graph_builder.cpp` — `compile_symbol()` emits `RawTimeLoad` for `t`; phasor derivation from timing cells (`beat`, `bar`, `phrase`, `section`, `beat-num`, `bar-num`, `beat-dur`, `bar-dur`).
+- `src/signal_engine/graph_builder.h` — `TimeContext` struct carries the local time node through compilation.
+- `src/signal_engine/cell_store.h` / `cell_store.cpp` — `init_timing_defaults()` populates `bpm`, `beats-per-bar`, `bars-per-phrase`, `phrases-per-section` cells.
+- `src/signal_engine/executor.cpp` — `ExecutionContext::t` and `ExecutionContext::dt`; `RawTimeLoad` returns `ctx.t`.
+- `src/firmware/firmware.cpp` — sets `ctx.t` from the hardware clock before each tick.
 - `wasm/wasm_wrapper.cpp` — `g_current_time`; `useq_update_time()`.
-- `uSEQ/src/dsp/tempoEstimator.h` / `tempoEstimator.cpp` — external tempo estimation from clock inputs.
+- `src/dsp/tempoEstimator.h` / `tempoEstimator.cpp` — external tempo estimation from clock inputs.
 - `test/signal_engine/test_signal_engine_golden.cpp` — "beat phasor", "bar phasor", "phrase phasor", "section phasor", "beat-num", "bar-num", "beat-dur" golden tests.
 
 ---
