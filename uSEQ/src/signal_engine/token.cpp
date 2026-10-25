@@ -58,8 +58,11 @@ uint16_t TokenStream::tokenize(const char* source, uint32_t length,
     uint16_t count = 0;
     uint32_t i = 0;
 
+    // SSP: a token past the limit was dropped without an error; one slot stays free for Eof
+    bool overflow = false;
     auto emit = [&](Token t) {
-        if (count < max_tokens) out[count++] = t;
+        if (t.kind == TokenKind::Eof ? count < max_tokens : count + 1 < max_tokens) out[count++] = t;
+        else overflow = true;
     };
 
     auto emit_error = [&](uint32_t pos, uint16_t len, const char* msg) {
@@ -166,6 +169,11 @@ uint16_t TokenStream::tokenize(const char* source, uint32_t length,
             t.span_start = (uint16_t)start;
             t.span_len = (uint16_t)sym_len;
             t.symbol = SymbolIntern::getInstance().intern(String(buf));
+            // SSP: cells are indexed by symbol ID; the interner is process-wide and never shrinks
+            if (t.symbol >= MAX_CELLS) {
+                emit_error(start, (uint16_t)sym_len, "Too many names: restart to free them");
+                continue;
+            }
             emit(t);
             continue;
         }
@@ -174,6 +182,8 @@ uint16_t TokenStream::tokenize(const char* source, uint32_t length,
         emit_error(i, 1, "Unexpected character");
         i++;
     }
+
+    if (overflow) emit_error(0, 0, "Too many tokens in one form");
 
     // Append EOF
     Token eof;
