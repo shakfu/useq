@@ -1,36 +1,11 @@
 # uSEQ Build Scripts
 
-This directory contains build and utility scripts for the uSEQ project.
+Build and utility scripts for the uSEQ signal engine on the desktop.
 
-## Scripts
-
-### `build_wasm.sh`
-Builds the WebAssembly version of uSEQ using Emscripten.
-
-```bash
-./scripts/build_wasm.sh
-```
-
-Output: `wasm/useq.js`
-
-### `serve.py`
-Simple Python web server for testing the WASM build locally.
-
-```bash
-./scripts/serve.py
-```
-
-Serves files from the `wasm/` directory on http://localhost:8000/
-
-### Other Scripts (existing)
-
-- `arduino_build.sh` - Build firmware for Arduino/Pico
-- `build.sh` - Build desktop version using Meson
-- `lisplibrary.py` - Convert LISP library to C++ header
+- `build.sh`: build with Meson and Ninja.
+- `test.sh`: build and run the test suites; `-h` lists them.
+- `lisplibrary.py`: convert a LISP library to a C++ header.
 
 ## Requirements
 
-- **WASM Build**: Emscripten (emcc)
-- **Server**: Python 3
-- **Arduino Build**: Arduino CLI
-- **Desktop Build**: Meson, Ninja, C++ compiler
+Meson, Ninja and a C++17 compiler.

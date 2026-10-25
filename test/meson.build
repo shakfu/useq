@@ -14,9 +14,6 @@ test_args = [
   '-std=c++17'
 ]
 
-# Firmware tests need flash storage + signal engine
-firmware_test_args = test_args + ['-DENABLE_FLASH_STORAGE']
-
 # Include directories
 test_inc = include_directories('../uSEQ', '../uSEQ/src')
 
@@ -71,72 +68,6 @@ signal_engine_phase4_test_exe = executable(
 
 test('signal_engine_phase4_test', signal_engine_phase4_test_exe)
 
-# ===== Flash Storage Tests =====
-
-flash_storage_test_exe = executable(
-  'test_flash_storage',
-  sources : ['signal_engine/test_flash_storage.cpp'],
-  include_directories : test_inc,
-  cpp_args : firmware_test_args,
-  cpp_pch : test_pch_file,
-  dependencies : [firmware_dep, math_dep]
-)
-
-test('flash_storage_test', flash_storage_test_exe)
-
-# ===== Firmware E2E Tests =====
-
-firmware_e2e_test_exe = executable(
-  'test_firmware_e2e',
-  sources : ['firmware/test_firmware_e2e.cpp'],
-  include_directories : test_inc,
-  cpp_args : firmware_test_args,
-  cpp_pch : test_pch_file,
-  dependencies : [firmware_dep, math_dep]
-)
-
-test('firmware_e2e_test', firmware_e2e_test_exe, timeout: 60)
-
-firmware_e2e2_test_exe = executable(
-  'test_firmware_e2e_part2',
-  sources : ['firmware/test_firmware_e2e_part2.cpp'],
-  include_directories : test_inc,
-  cpp_args : firmware_test_args,
-  cpp_pch : test_pch_file,
-  dependencies : [firmware_dep, math_dep]
-)
-
-test('firmware_e2e_test_part2', firmware_e2e2_test_exe, timeout: 60)
-
-# ===== Firmware Fuzz Tests =====
-
-firmware_fuzz_test_exe = executable(
-  'test_firmware_fuzz',
-  sources : ['firmware/test_firmware_fuzz.cpp'],
-  include_directories : test_inc,
-  cpp_args : firmware_test_args,
-  cpp_pch : test_pch_file,
-  dependencies : [firmware_dep, math_dep]
-)
-
-test('firmware_fuzz_test', firmware_fuzz_test_exe, timeout: 120)
-
-# ===== Wire Protocol Contract Tests =====
-# Encodes the contract from docs/specs/wire-protocol.md. Most cases are
-# tagged [.][!shouldfail] so they don't gate CI; implementing agents
-# remove the tag as their work lands.
-
-wire_protocol_contract_test_exe = executable(
-  'test_wire_protocol_contract',
-  sources : ['firmware/test_wire_protocol_contract.cpp'],
-  include_directories : test_inc,
-  cpp_args : firmware_test_args,
-  cpp_pch : test_pch_file,
-  dependencies : [firmware_dep, math_dep]
-)
-
-test('wire_protocol_contract_test', wire_protocol_contract_test_exe, timeout: 30)
-
 # ===== Devtools Debug Protocol Contract Tests =====
 # Encodes the contract for the devtools debug wire protocol.
 # Tests exercise dt::handle_debug_message() actions: capabilities,
@@ -144,7 +75,7 @@ test('wire_protocol_contract_test', wire_protocol_contract_test_exe, timeout: 30
 
 devtools_contract_test_exe = executable(
   'test_devtools_contract',
-  sources : ['firmware/test_devtools_contract.cpp'],
+  sources : ['devtools/test_devtools_contract.cpp'],
   include_directories : test_inc,
   cpp_args : test_args + ['-DUSEQ_DEVTOOLS=1'],
   cpp_pch : test_pch_file,

@@ -67,30 +67,6 @@ if get_option('enable_signal_engine')
   message('Signal engine enabled')
 endif
 
-if get_option('enable_dsp')
-  standalone_args += '-DENABLE_DSP_ENGINE'
-  standalone_args += '-DENABLE_TEMPO_ESTIMATOR'
-  message('DSP engine support enabled')
-endif
-
-if get_option('enable_i2c')
-  standalone_args += '-DENABLE_I2C_NETWORKING'
-  standalone_args += '-DENABLE_I2C_HOST'
-  standalone_args += '-DENABLE_I2C_CLIENT'
-  message('I2C networking support enabled')
-endif
-
-if get_option('enable_flash')
-  standalone_args += '-DENABLE_FLASH_STORAGE'
-  message('Flash storage support enabled')
-endif
-
-if get_option('enable_leds')
-  standalone_args += '-DENABLE_LED_CONTROL'
-  standalone_args += '-DENABLE_RGB_LED'
-  message('LED control support enabled')
-endif
-
 if get_option('enable_devtools')
   standalone_args += '-DUSEQ_DEVTOOLS=1'
   message('Devtools telemetry enabled')
@@ -159,27 +135,6 @@ signal_engine_dep = declare_dependency(
   link_with : signal_engine_lib,
   include_directories : src_inc,
   dependencies : [utils_dep, devtools_dep]
-)
-
-# Firmware scaffold library - composition root and hardware modules
-firmware_lib = static_library('useq_firmware',
-  'uSEQ/src/firmware/firmware.cpp',
-  'uSEQ/src/firmware/hardware_io.cpp',
-  'uSEQ/src/firmware/serial_protocol.cpp',
-  'uSEQ/src/firmware/flash_storage.cpp',
-  'uSEQ/src/firmware/i2c_network.cpp',
-  'uSEQ/src/firmware/dsp_engine.cpp',
-  include_directories : src_inc,
-  cpp_args : standalone_args,
-  cpp_pch : pch_file,
-  dependencies : signal_engine_dep,
-  override_options : unity_override_options
-)
-
-firmware_dep = declare_dependency(
-  link_with : firmware_lib,
-  include_directories : src_inc,
-  dependencies : signal_engine_dep
 )
 
 # Add test subdirectory

@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-# Script to run all uSEQ Tests (signal engine, firmware, golden semantics)
+# Script to run all uSEQ Tests (signal engine, golden semantics, devtools)
 # Usage: ./scripts/test.sh [options]
 #
 # Options:
@@ -46,7 +46,7 @@ print_warning() {
 }
 
 # Available test suites (must match meson test names without the 'uSEQ:' prefix)
-AVAILABLE_TESTS="signal_engine firmware_e2e firmware_e2e_part2 firmware_fuzz signal_engine_golden signal_engine_phase4 signal_engine_robustness signal_engine_probe_smoke flash_storage wire_protocol_contract devtools_contract live_edit output_classification ugen state_identity"
+AVAILABLE_TESTS="signal_engine signal_engine_golden signal_engine_phase4 signal_engine_robustness signal_engine_probe_smoke devtools_contract live_edit output_classification ugen state_identity"
 
 # Function to show help
 show_help() {
@@ -64,11 +64,6 @@ OPTIONS:
                         signal_engine_golden   - Golden semantic tests (data-driven)
                         signal_engine_phase4   - Advanced feature tests
                         signal_engine_robustness - Fuzz and stress tests
-                        firmware_e2e           - Firmware end-to-end tests (part 1)
-                        firmware_e2e_part2     - Firmware end-to-end tests (part 2)
-                        firmware_fuzz          - Firmware fuzz tests
-                        flash_storage          - Flash persistence round-trips
-                        wire_protocol_contract - Wire protocol contract tests
                         devtools_contract      - Devtools debug protocol tests
                         live_edit              - Live-edit slot tests
                         output_classification  - Output type classification
@@ -177,11 +172,6 @@ if [ -n "$SINGLE_TEST" ]; then
         signal_engine_phase4) meson_test_name="signal_engine_phase4_test" ;;
         signal_engine_robustness) meson_test_name="signal_engine_robustness_test" ;;
         signal_engine_probe_smoke) meson_test_name="signal_engine_probe_smoke" ;;
-        firmware_e2e)         meson_test_name="firmware_e2e_test" ;;
-        firmware_e2e_part2)   meson_test_name="firmware_e2e_test_part2" ;;
-        firmware_fuzz)        meson_test_name="firmware_fuzz_test" ;;
-        flash_storage)        meson_test_name="flash_storage_test" ;;
-        wire_protocol_contract) meson_test_name="wire_protocol_contract_test" ;;
         devtools_contract)    meson_test_name="devtools_contract_test" ;;
         live_edit)            meson_test_name="live_edit_test" ;;
         output_classification) meson_test_name="output_classification_test" ;;
@@ -208,10 +198,6 @@ else
         echo "  - Signal Engine Golden - Data-driven semantic tests"
         echo "  - Signal Engine Phase4 - Advanced features"
         echo "  - Signal Engine Robustness - Fuzz and stress tests"
-        echo "  - Firmware E2E         - Full tick-loop integration"
-        echo "  - Firmware Fuzz        - Firmware fuzz tests"
-        echo "  - Flash Storage        - Persistence round-trips"
-        echo "  - Wire Protocol        - Serial protocol contract"
         echo "  - Devtools Contract    - Debug protocol tests"
         echo "  - Live Edit            - Live-edit slot tests"
         echo "  - Output Classification - Output type classification"
